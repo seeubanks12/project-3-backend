@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const User = require("../models/User.model");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 //Update User Info
-router.get("/edit-user/:id", (req, res, next) => {
-  User.findById(req.params.id)
+router.get("/edit-user", isAuthenticated, (req, res, next) => {
+  User.findById(req.user._id)
     .then((foundUser) => {
       res.json(foundUser);
     })
@@ -12,9 +13,9 @@ router.get("/edit-user/:id", (req, res, next) => {
     });
 });
 
-router.post("/edit-user/:id", (req, res, next) => {
+router.post("/edit-user", isAuthenticated, (req, res, next) => {
   User.findByIdAndUpdate(
-    req.params.id,
+    req.user._id,
     {
       username: req.body.username,
       email: req.body.email,
@@ -31,8 +32,8 @@ router.post("/edit-user/:id", (req, res, next) => {
 });
 
 //Delete Users
-router.post("/delete/:id", (req, res, next) => {
-  User.findByIdAndRemove(req.params.id)
+router.post("/delete", isAuthenticated, (req, res, next) => {
+  User.findByIdAndRemove(req.user._id)
     .then(() => {
       res.json("User Deleted");
     })
