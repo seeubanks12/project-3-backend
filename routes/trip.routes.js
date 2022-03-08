@@ -7,7 +7,7 @@ router.get("/", (req, res, next) => {
 });
 
 //Create a Trip
-router.post("/create-trip", (req, res) => {
+router.post("/plan-trip", (req, res) => {
   Trip.create({
     title: req.body.title,
     location: req.body.location,
