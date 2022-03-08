@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv/config");
 
 // ℹ️ Handles password encryption
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
 // How many rounds should bcrypt run the salt (default [10 - 12 rounds])
