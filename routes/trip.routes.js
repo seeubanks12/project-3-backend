@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Trip = require("../models/Trip.model");
 
 /* GET home page */
@@ -7,7 +8,7 @@ router.get("/", (req, res, next) => {
 });
 
 //Create a Trip
-router.post("/plan-trip", (req, res) => {
+router.post("/plan-trip", isAuthenticated, (req, res) => {
   Trip.create({
     title: req.body.title,
     location: req.body.location,
