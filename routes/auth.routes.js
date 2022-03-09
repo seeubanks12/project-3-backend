@@ -13,8 +13,7 @@ const saltRounds = 10;
 const User = require("../models/User.model");
 
 // Require necessary (isLoggedOut and isLiggedIn) middleware in order to control access to specific routes
-const isLoggedOut = require("../middleware/isLoggedOut");
-const isLoggedIn = require("../middleware/isLoggedIn");
+
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 router.get("/", (req, res) => {
@@ -85,7 +84,6 @@ router.post("/signup", (req, res) => {
         })
         .then((user) => {
           // Bind the user to the session object
-          req.session.user = user;
           res.status(201).json(user);
         })
         .catch((error) => {
