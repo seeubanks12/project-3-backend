@@ -18,8 +18,8 @@ router.post("/plan-trip", isAuthenticated, (req, res) => {
     creatorId: req.user._id,
     // created: req.body.create,
     // lastUpdate: req.body.lastUpdate,
-    // user: req.body.user,
-    // guests: req.body.guests,
+    user: req.body.user,
+    guests: req.body.guests,
   })
     .then((createdTrip) => {
       res.json(createdTrip);

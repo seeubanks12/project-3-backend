@@ -1,4 +1,6 @@
 const router = require("express").Router();
+const { is } = require("express/lib/request");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 const Pin = require("../models/Pin.model");
 
 router.get("/", (req, res, next) => {
@@ -6,11 +8,11 @@ router.get("/", (req, res, next) => {
 });
 
 //Create New Pin
-router.post("/add-pin", (req, res) => {
+router.post("/add-pin", isAuthenticated, (req, res) => {
   Pin.create({
-    username: req.body.username,
+    username: req.user.username,
     title: req.body.title,
-    description: req.body.description,project,
+    description: req.body.description,
     rating: req.body.rating,
     long: req.body.long,
     lat: req.body.lat,
@@ -26,12 +28,12 @@ router.post("/add-pin", (req, res) => {
 
 //View All Pins
 //Users will be able to view a page with their individual pins
-router.get("/view-all/:userId", (req, res) => {
-  Pin.find({ creatorId: req.params.userId })
-    .sort({ createdAt: -1 })
-    .populate("creatorId")
+router.get("/view-all", isAuthenticated, (req, res) => {
+  Pin.find({ creatorId: req.user._id })
+    // .sort({ createdAt: -1 })
+    // .populate("creatorId")
     .then((userPins) => {
-      res.json({ pins: userPins });
+      res.json(userPins);
     })
     .catch((err) => {
       res.status(500).json(err.message);
@@ -39,8 +41,8 @@ router.get("/view-all/:userId", (req, res) => {
 });
 
 //View Pin by ID
-router.get("/view/:pinId", (req, res) => {
-  Pin.findById(req.params.pinId)
+router.get("/view", isAuthenticated, (req, res) => {
+  Pin.findById(req.user._id)
     .then((foundPin) => {
       res.json(foundPin);
     })
@@ -50,8 +52,8 @@ router.get("/view/:pinId", (req, res) => {
 });
 
 //Update Pin
-router.get("/edit-pin/:id", (req, res, next) => {
-  Pin.findById(req.params.id)
+router.get("/edit-pin", isAuthenticated, (req, res, next) => {
+  Pin.findById(req.user._id)
     .then((foundPin) => {
       console.log("We found this pin", foundPin);
       res.json(foundPin, { pins: foundPin });
@@ -61,25 +63,25 @@ router.get("/edit-pin/:id", (req, res, next) => {
     });
 });
 
-router.post("/edit-pin/:id", (req, res, next) => {
-  Pin.findByIdAndUpdate(req.params.id, {
+router.post("/edit-pin", isAuthenticated, (req, res, next) => {
+  Pin.findByIdAndUpdate(req.user._id, {
     username: req.body.username,
     title: req.body.title,
     description: req.body.description.trim(),
     rating: req.body.rating,
-    long: req.body.long,
+    lng: req.body.lng,
     lat: req.body.lat,
   })
     .then((userPins) => {
-      res.json({ pins: userPins,  });
+      res.json({ pins: userPins });
     })
     .catch((err) => {
       res.status(500).json(err.message);
     });
 });
 
-router.post("/delete-pin/:id", (req, res, next) => {
-  Pin.findByIdAndRemove(req.params.id)
+router.post("/delete-pin", isAuthenticated, (req, res, next) => {
+  Pin.findByIdAndRemove(req.user._id)
     .then((userPins) => {
       res.json(userPins);
     })
