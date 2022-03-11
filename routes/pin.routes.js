@@ -14,7 +14,7 @@ router.post("/add-pin", isAuthenticated, (req, res) => {
     title: req.body.title,
     description: req.body.description,
     rating: req.body.rating,
-    long: req.body.long,
+    lng: req.body.lng,
     lat: req.body.lat,
     creatorId: req.user._id,
   })
@@ -63,15 +63,17 @@ router.get("/edit-pin", isAuthenticated, (req, res, next) => {
     });
 });
 
-router.post("/edit-pin", isAuthenticated, (req, res, next) => {
-  Pin.findByIdAndUpdate(req.user._id, {
-    username: req.body.username,
-    title: req.body.title,
-    description: req.body.description.trim(),
-    rating: req.body.rating,
-    lng: req.body.lng,
-    lat: req.body.lat,
-  })
+router.post("/edit-pin/:id", isAuthenticated, (req, res, next) => {
+  Pin.findByIdAndUpdate(
+    req.params.id,
+    {
+      username: req.body.username,
+      title: req.body.title,
+      description: req.body.description.trim(),
+      rating: req.body.rating,
+    },
+    { new: true }
+  )
     .then((userPins) => {
       res.json({ pins: userPins });
     })
@@ -80,8 +82,8 @@ router.post("/edit-pin", isAuthenticated, (req, res, next) => {
     });
 });
 
-router.post("/delete-pin", isAuthenticated, (req, res, next) => {
-  Pin.findByIdAndRemove(req.user._id)
+router.post("/delete-pin/:id", isAuthenticated, (req, res, next) => {
+  Pin.findByIdAndRemove(req.params.id)
     .then((userPins) => {
       res.json(userPins);
     })

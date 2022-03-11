@@ -50,9 +50,19 @@ router.get("/view-trip", (req, res) => {
     });
 });
 
+router.get("/view-trip/:tripId", (req, res) => {
+  Trip.findById(req.params.tripId)
+    .then((foundTrip) => {
+      res.json(foundTrip);
+    })
+    .catch((err) => {
+      res.status(500).json(err.message);
+    });
+});
+
 //Update Trip
-router.get("/update-trip", (req, res, next) => {
-  Trip.findById(req.user._id)
+router.get("/update-trip/:tripId", (req, res, next) => {
+  Trip.findById(req.params.tripId)
     .then((foundTrip) => {
       console.log("We found this pin", foundTrip);
       res.json(foundTrip);
@@ -62,9 +72,9 @@ router.get("/update-trip", (req, res, next) => {
     });
 });
 
-router.post("/update-trip", (req, res, next) => {
+router.post("/update-trip/:tripId", (req, res, next) => {
   Trip.findByIdAndUpdate(
-    req.user._id,
+    req.params.tripId,
     {
       title: req.body.title,
       location: req.body.location,
@@ -83,8 +93,8 @@ router.post("/update-trip", (req, res, next) => {
 });
 
 //delete trip
-router.post("/delete-trip", (req, res, next) => {
-  Trip.findByIdAndRemove(req.user._id)
+router.post("/delete-trip/:tripId", (req, res, next) => {
+  Trip.findByIdAndRemove(req.params.tripId)
     .then(() => {
       res.json("We can't go anymore!");
     })
